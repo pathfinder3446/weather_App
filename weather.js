@@ -3,7 +3,7 @@ const input = document.querySelector(".top-banner input");
 const msg = document.querySelector("span.msg");
 const list = document.querySelector(".ajax-section .cities");
 
-localStorage.setItem("apiKey", EncryptStringAES("4a4d9ffc3a4f6eeb22da6338660d08cf"));
+// localStorage.setItem("apiKey", EncryptStringAES("4a4d9ffc3a4f6eeb22da6338660d08cf"));
 
 form.addEventListener("submit", (e) =>{
     e.preventDefault();
@@ -29,6 +29,23 @@ const getWeatherDataFromApi = async() =>{
         console.log(response.data);
         let iconUrl = `http://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
 
+        //!forEach array ve nodeListlerde kullanılabilir
+        //!map. filter, reduce sadece arrayde kullanılır.
+        const cityListItems = list.querySelectorAll(".city");
+        const cityListItemsArray = Array.from(cityListItems);
+        if(cityListItemsArray.length > 0){
+            const filteredArray = cityListItemsArray.filter(cityCard => cityCard.querySelector(".city-name span").innerText == name);
+            if(filteredArray.length > 0){
+                msg.innerText = `You already know the weather for ${name}, please search for another city`;
+                setTimeout(() => {
+                    msg.innerText = "";
+                }, 5000);
+                form.reset();
+                return;
+            };
+        }
+
+
         const createdLi = document.createElement("li");
         createdLi.classList.add("city");
         const createdLiInnerHTML = 
@@ -47,7 +64,10 @@ const getWeatherDataFromApi = async() =>{
 
     } 
     catch (error) {
-        
-    }
+        msg.innerText = Error;
+        setTimeout(() => {
+            msg.innerText = "";
+        }, 5000);
+    };
     form.reset();
 }
